@@ -9,14 +9,17 @@
 # Package Load ------------------------------------------------------------
 library(tidyverse)
 library(emmeans)
-
+library(cowplot)
+library(patchwork)
 
 # Input data --------------------------------------------------------------
 ## Obtaining data from data prep code
 # source("code/2_Data_Analysis/0_data_preparation.R")
 
 ## Obtaining data from object ('t1' dataframe)
+load("data/RDSL_ICU_admissions_2010_2020_NonCOVID_raw_final.RData")
 load("data/RDSL_ICU_admissions_2010_2020_NonCOVID_imputed_final.RData")
+load("data/RDSL_ICU_admissions_2010_2020_All_raw_final.RData")
 
 
 
@@ -104,7 +107,7 @@ tadm_type <- t1 %>%
 
 
 ## Exporting Figure 1
-pdf("Figure_1", width = 14, height = 8)
+pdf("output/Figure_1.pdf", width = 14, height = 8)
 (tagesaps + tdeath) / (tadm + tadm_type) + plot_annotation(tag_levels = "A")
 dev.off()
 
@@ -181,20 +184,20 @@ table1 <- as_flex_table(table1)
 
 
 #Checking saps linearity
-t1 %>%
-    mutate(saps_dec = cut(saps, breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 150))) %>%
-    ggplot(aes(x = saps_dec, fill = death)) +
-    geom_bar(position = "fill") +
-    facet_wrap( ~ adm_year, ncol = 5) +
-    theme_classic() %+replace% theme(axis.text.x = element_text(angle = 90)) +
-    scale_fill_manual(values = c("white", "black"), guide = NULL) +
-    geom_hline(
-        yintercept = c(0.25, 0.50, 0.75),
-        linetype = 2,
-        alpha = 0.4
-    ) +
-    scale_y_continuous(labels = scales::percent) +
-    labs(x = "", y = "Mortality (%)")
+# t1 %>%
+#     mutate(saps_dec = cut(saps, breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 150))) %>%
+#     ggplot(aes(x = saps_dec, fill = death)) +
+#     geom_bar(position = "fill") +
+#     facet_wrap( ~ adm_year, ncol = 5) +
+#     theme_classic() %+replace% theme(axis.text.x = element_text(angle = 90)) +
+#     scale_fill_manual(values = c("white", "black"), guide = NULL) +
+#     geom_hline(
+#         yintercept = c(0.25, 0.50, 0.75),
+#         linetype = 2,
+#         alpha = 0.4
+#     ) +
+#     scale_y_continuous(labels = scales::percent) +
+#     labs(x = "", y = "Mortality (%)")
 
 
 
@@ -214,7 +217,7 @@ library(classifierplots)
 t2 <- t1 %>% 
     select(adm_year, death)
 
-t2$saps_prob <- db$saps3death_probability_standard_equation / 100
+t2$saps_prob <- t1$saps / 100
 
 # Obtaining calibration per year
 callme <- function(x) {
@@ -278,7 +281,7 @@ library(classifierplots)
 
 callme <-
     function(i) {
-        calibration_plot(db$death[db$adm_year == i], db$saps_prob[db$adm_year == i]) +
+        calibration_plot(t1$death[t1$adm_year == i], t1$saps_prob[t1$adm_year == i]) +
             theme_minimal() +
             labs(subtitle = i)
     }

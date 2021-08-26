@@ -7,15 +7,14 @@
 ################################################################################
 # Libraries ---------------------------------------------------------------
 library(tidyverse)
-
+library(cowplot)
 
 # Input data --------------------------------------------------------------
 ## Obtaining data from data prep code
 # source("code/2_Data_Analysis/0_data_preparation.R")
 
 ## Obtaining raw dataframe from object ('df' dataframe) - COVID + NonCovid
-load("data/RDSL_ICU_admissions_2010_2020_NonCOVID_imputed_final.RData")
-
+load("data/RDSL_ICU_admissions_2010_2020_All_raw_final.RData")
 
 
 
@@ -25,10 +24,10 @@ load("data/RDSL_ICU_admissions_2010_2020_NonCOVID_imputed_final.RData")
 
 ### Obtaining dataset for VLAD calculating
 vlad <- df %>%
-    filter(year(unit_admission_date) == "2020") %>%
+    filter(lubridate::year(unit_admission_date) == "2020") %>%
     mutate(psaps = saps3death_probability_standard_equation,
            death,
-           pweek = week(unit_admission_date)) %>%
+           pweek = lubridate::week(unit_admission_date)) %>%
     select(death, psaps, pweek, status_covid19) %>%
     mutate(
         psaps = psaps / 100,
@@ -100,6 +99,6 @@ pvladB <- vlad %>%
 library(patchwork)
 
 ## Exporting Figure 2
-pdf("Figure_2.pdf", width = 12, height = 10)
+pdf("output/Figure_2.pdf", width = 12, height = 10)
 (pvladA / pvladB) + plot_annotation(tag_levels = 'A')
 dev.off()

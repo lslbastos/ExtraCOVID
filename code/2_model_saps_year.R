@@ -79,7 +79,7 @@ fig2B <- ggp_random %>%
 
 
 
-## Ussing emeans to estimate OR per SAPS-3 and year (adjusted by unit) (Figure 4)
+## Ussing emmeans to estimate OR per SAPS-3 and year (adjusted by unit) (Figure 4)
 library(emmeans)
 
 pp <-
@@ -142,7 +142,7 @@ fig4 <- orplot %>% ggplot(aes(x = contrast, y = odds.ratio)) +
 
 
 ## Exporting Figure 4
-pdf("Figure_4.pdf", width = 10, height = 10)
+pdf("output/Figure_4.pdf", width = 10, height = 10)
 fig4
 dev.off()
 

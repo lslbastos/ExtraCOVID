@@ -110,9 +110,9 @@ db <- db %>%
 db <- db %>% 
     filter(!is.na(death))
 
-
 # Exporting backup dataset with all admissions (COVID + NonCovid)
-save(db, "data/RDSL_ICU_admissions_2010_2020_All_raw_final.RData")
+df <- db
+save(df, file = "data/RDSL_ICU_admissions_2010_2020_All_raw_final.RData")
 
 
 ### Filters non-covid cases (514,292 patients)
@@ -134,7 +134,7 @@ length(unique(db$hospital_code))
 
 
 ### Exporting 'raw' dataset
-# save(db, "data/RDSL_ICU_admissions_2010_2020_NonCOVID_raw_final.RData")
+save(db, file = "data/RDSL_ICU_admissions_2010_2020_NonCOVID_raw_final.RData")
 
 
 
@@ -226,7 +226,7 @@ t1 <- t1[c("age", "saps", "cci","ecog","adm_type","infection","mv","vp","icu_los
 
 
 ## Exporting 'imputed' final dataset ('t1')
-save(t1, "data/RDSL_ICU_admissions_2010_2020_NonCOVID_imputed_final.RData")
+save(t1, file = "data/RDSL_ICU_admissions_2010_2020_NonCOVID_imputed_final.RData")
 
 
 

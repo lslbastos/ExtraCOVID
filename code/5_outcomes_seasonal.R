@@ -5,8 +5,8 @@
 ##### Fernando Zampieri (@f_g_zampieri), Leonardo Bastos (@lslbastos)
 #####
 ################################################################################
-
-
+library(tidyverse)
+library(lme4)
 
 # Input data --------------------------------------------------------------
 ## Obtaining data from data prep code
@@ -14,19 +14,16 @@
 
 ## Obtaining data from object ('t1' dataframe)
 load("data/RDSL_ICU_admissions_2010_2020_NonCOVID_imputed_final.RData")
-
-
+load("data/RDSL_ICU_admissions_2010_2020_NonCOVID_raw_final.RData")
 
 
 # Data Analysis -----------------------------------------------------------
-
-
 season <- t1 %>% select(saps, death, unit_code, adm_year)
 season$adm_date <- db$unit_admission_date
 
-save(season, file = "season.RData")
+save(season, file = "data/season.RData")
 
-season$pweek <- week(season$adm_date)
+season$pweek <- lubridate::week(season$adm_date)
 
 
 
