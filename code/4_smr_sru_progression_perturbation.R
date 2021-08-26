@@ -1,10 +1,16 @@
-rm(list = ls())
+################################################################################
+##### ExtraCOVID - Analysis of COVID-19 impact on non-covid ICU patients
+#####  
+##### SMR and SRU progression analysis and perturbation scores
+##### Fernando Zampieri (@f_g_zampieri), Leonardo Bastos (@lslbastos)
+#####
+################################################################################
 
 # Library -----------------------------------------------------------------
 library(tidyverse)
 
 ## Loading data 'db'
-load("input/covidor_db_all.RData")
+load("data/RDSL_ICU_admissions_2010_2020_All_raw_final.RData")
 
  
 # # Units with COVID-19 vs. No COVID-19 -------------------------------------
