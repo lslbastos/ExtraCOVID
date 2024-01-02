@@ -16,8 +16,9 @@ library(lme4)
 
 
 ## Obtaining data from object ('t1' dataframe)
-load("data/RDSL_ICU_admissions_2010_2020_NonCOVID_imputed_final.RData")
+# load("data/RDSL_ICU_admissions_2010_2020_NonCOVID_imputed_final.RData")
 
+load("data/RDSL_ICU_admissions_2010_2020_All_raw_final.RData")
 
 
 
@@ -30,20 +31,20 @@ load("data/RDSL_ICU_admissions_2010_2020_NonCOVID_imputed_final.RData")
 m1 <- glmer(
     death ~ saps * adm_year + (1 | unit_code),
     family = "binomial",
-    data = t1,
+    data = df,
     nAGQ = 0
 )
 m2 <- glmer(
     death ~ saps + adm_year + (adm_year | unit_code),
     family = "binomial",
-    data = t1,
+    data = df,
     nAGQ = 0,
     control = glmerControl(optCtrl = list(maxfun = 1e6))
 )
 m3 <- glmer(
     death ~ saps * adm_year + (adm_year | unit_code),
     family = "binomial",
-    data = t1,
+    data = df,
     nAGQ = 0,
     control = glmerControl(optCtrl = list(maxfun = 1e6))
 )

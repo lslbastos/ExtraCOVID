@@ -17,7 +17,7 @@ library(patchwork)
 
 
 # Data input --------------------------------------------------------------
-load("data/RDSL_ICU_admissions_2010_2020.RData")
+load("data/BacukpData_ExtraCOVID/RDSL_ICU_admissions_2010_2020.RData")
 
 ### Loading data 
 db <- 
@@ -85,8 +85,13 @@ db <- db %>%
     filter(adm_year != "2008",
            adm_year != "2009",
            adm_year != "2010",
-           adm_year != "2021")
+           # adm_year != "2020"
+           adm_year != "2021"
+           ) %>% 
+    filter(adm_year %in% c("2015", "2016", "2017",
+                           "2018", "2019"))
 
+save(db , file = "data/RDSL_ICU_admissions_2015_2019_All_raw_final.RData")
 
 ### Filters: Adult patients (Age >= 18 years old) ( 636,330 admissions)
 db <- db %>% 
@@ -111,13 +116,27 @@ db <- db %>%
     filter(!is.na(death))
 
 # Exporting backup dataset with all admissions (COVID + NonCovid)
-df <- db
-save(df, file = "data/RDSL_ICU_admissions_2010_2020_All_raw_final.RData")
+df_hosp <- read_csv2("../../COVID19_HospVariability/Analysis_COVID19_HospVariability/data/codigo_hospitais.csv")
+
+df <- db 
+    # filter(adm_year %in% c("2016", "2017", "2018", "2019", "2020")) %>% 
+    # left_join(
+    #     df_hosp,
+    #     by = c("hospital_code" = "HospitalCode")
+    #     ) %>% 
+    # filter(str_detect(Grupo, "(SP|RJ)"))
+
+# save(df , file = "data/RDSL_ICU_admissions_2010_2020_All_raw_final.RData")
+# write_csv(df, "data/RDSL_ICU_admissions_2010_2020_All_raw_final.RData")
+# write_csv(df, "data/RDSL_ICU_admissions_2016_2020_RJ_SP.csv.gz")
+write_csv(db %>% filter(status_covid19 == "Confirmado", adm_year == "2020")
+          , "data/RDSL_ICU_admissions_covid_2020.csv")
+
 
 
 ### Filters non-covid cases (514,292 patients)
-db <- db %>% 
-    filter(status_covid19 == "Negativo/Sem suspeição")
+# db <- db %>% 
+#     filter(status_covid19 == "Negativo/Sem suspeição")
 
 
 
@@ -132,11 +151,11 @@ length(unique(db$unit_code))
 # number of Hospitals (45)
 length(unique(db$hospital_code))
 
-
-### Exporting 'raw' dataset
-save(db, file = "data/RDSL_ICU_admissions_2010_2020_NonCOVID_raw_final.RData")
-
-
+db2 <- db %>% filter(adm_year == "2019")
+# ### Exporting 'raw' dataset
+# save(db2, file = "data/RDSL_ICU_admissions_filtered_2019.RData")
+# 
+# 
 
 
 
@@ -226,7 +245,10 @@ t1 <- t1[c("age", "saps", "cci","ecog","adm_type","infection","mv","vp","icu_los
 
 
 ## Exporting 'imputed' final dataset ('t1')
-save(t1, file = "data/RDSL_ICU_admissions_2010_2020_NonCOVID_imputed_final.RData")
+# save(t1, file = "data/RDSL_ICU_admissions_2010_2020_NonCOVID_imputed_final.RData")
+
+save(df, file = "data/RDSL_ICU_admissions_2019_2020_raw.RData")
+write_csv(df, "data/RDSL_ICU_admissions_2019_2020_raw.csv")
 
 
 
